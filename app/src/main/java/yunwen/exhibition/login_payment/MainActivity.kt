@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         "AQYQm8ytpreKDB3pUl7FzEYUl2C14d-6irBzLButt7_8qiZDY1LOT4lj4VeRtO1uYjCSv8pfUynmZLEZ"
     private val secretID =
         "EDwS3qjwzpKdISzXtMWiHV8vF0qSeaJuXMhesB4AprZWv8KPbEiYC0u5elOHGdmtiVBwnPfdktuwa3v2"
-    private val returnUrl = "yunwen.exhibition.login_payment://demoapp"
+    private val returnUrl = "yunwen.exhibition.login_payment://returnUrl"
     var accessToken = ""
     private lateinit var uniqueId: String
     private var orderid = ""
@@ -89,22 +89,23 @@ class MainActivity : AppCompatActivity() {
                     })
                 })
             })
-            put("payment_source", JSONObject().apply {
-                put("paypal", JSONObject().apply {
-                    put("experience_context", JSONObject().apply {
-                        put("payment_method_preference", "IMMEDIATE_PAYMENT_REQUIRED")
-                        put("brand_name", "SH Developer")
-                        put("locale", "en-US")
-                        put("landing_page", "LOGIN")
-                        put("shipping_preference", "NO_SHIPPING")
-                        put("user_action", "PAY_NOW")
-                        put("return_url", returnUrl)
-                        put("cancel_url", "https://example.com/cancelUrl")
-                    })
-                })
-            })
+//            put("payment_source", JSONObject().apply {
+//                put("paypal", JSONObject().apply {
+//                    put("experience_context", JSONObject().apply {
+//                        put("payment_method_preference", "IMMEDIATE_PAYMENT_REQUIRED")
+//                        put("brand_name", "SH Developer")
+//                        put("locale", "en-US")
+//                        put("landing_page", "LOGIN")
+//                        put("shipping_preference", "NO_SHIPPING")
+//                        put("user_action", "PAY_NOW")
+//                        put("return_url", returnUrl)
+//                        put("cancel_url", "https://example.com/cancelUrl")
+//                    })
+//                })
+//            })
         }
 
+        Log.d(TAG, "orderRequestJson: $orderRequestJson")
         AndroidNetworking.post("https://api-m.sandbox.paypal.com/v2/checkout/orders")
             .addHeaders("Authorization", "Bearer $accessToken")
             .addHeaders("Content-Type", "application/json")
@@ -114,7 +115,7 @@ class MainActivity : AppCompatActivity() {
             .build()
             .getAsJSONObject(object : JSONObjectRequestListener {
                 override fun onResponse(response: JSONObject) {
-                    Log.d(TAG, "Order Response : " + response.toString())
+                    Log.d(TAG, "Order Response : $response")
                     handlerOrderID(response.getString("id"))
                 }
 
@@ -164,7 +165,7 @@ class MainActivity : AppCompatActivity() {
             .getAsJSONObject(object : JSONObjectRequestListener {
                 override fun onResponse(response: JSONObject) {
                     accessToken = response.getString("access_token")
-                    Log.d(TAG, accessToken)
+                    Log.d(TAG, "accessToken: $accessToken")
 
                     Toast.makeText(this@MainActivity, "Access Token Fetched!", Toast.LENGTH_SHORT)
                         .show()
