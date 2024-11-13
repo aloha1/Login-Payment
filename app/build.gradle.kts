@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -20,9 +21,9 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    fun Packaging.() {
-        resources.excludes.add("META-INF/DEPENDENCIES")
-    }
+    //fun Packaging.() {
+    //    resources.excludes.add("META-INF/DEPENDENCIES")
+    //}
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -56,6 +57,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.identity.jvm)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.firebase.auth.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -68,5 +71,11 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.google.code.gson:gson:2.10.1")
 
+    //login
+    implementation("com.facebook.android:facebook-android-sdk:[4,5)")
     implementation(libs.paypal.web.payments)
+
+    //Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
 }
