@@ -4,6 +4,16 @@ interface Destinations {
     val route: String
 }
 
+
+object Login: Destinations {
+    override val route = "Login"
+}
+
+
+object Register: Destinations {
+    override val route = "Register"
+}
+
 object HomeScreen: Destinations {
     override val route = "HomeScreen"
 }

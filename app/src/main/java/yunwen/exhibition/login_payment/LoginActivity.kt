@@ -67,11 +67,11 @@ class LoginActivity: AppCompatActivity() {
 @Composable
 fun Navigation(context: Context, modifier: Modifier = Modifier) {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "login"){
-        composable("login") {
+    NavHost(navController = navController, startDestination = Login.route){
+        composable(Login.route) {
             LoginPage(context = context, modifier = modifier, navController = navController)
         }
-        composable("register") {
+        composable(Register.route) {
             Register(context = context, modifier = modifier)
         }
     }
@@ -137,22 +137,14 @@ fun LoginPage(
 @Composable
 fun Register(context: Context, modifier: Modifier = Modifier) {
     Column(
-        modifier = modifier.fillMaxWidth().verticalScroll(rememberScrollState()),
+        modifier = modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.Start
     ) {
-        //var firstName by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
         var email by remember { mutableStateOf("") }
         val auth = FirebaseAuth.getInstance()
-
-//        Image(
-//            painter = painterResource(id = R.drawable.logo),
-//            contentDescription = "Title",
-//            modifier = Modifier
-//                .align(Alignment.CenterHorizontally)
-//                .height(100.dp)
-//                .width(240.dp),
-//        )
         Text(
             modifier = Modifier
                 .fillMaxWidth()
@@ -182,7 +174,8 @@ fun Register(context: Context, modifier: Modifier = Modifier) {
             text = "Email"
         )
         TextField(
-            modifier = Modifier.padding(horizontal = 32.dp)
+            modifier = Modifier
+                .padding(horizontal = 32.dp)
                 .fillMaxWidth()
                 .wrapContentHeight(),
             value = email,
@@ -195,7 +188,8 @@ fun Register(context: Context, modifier: Modifier = Modifier) {
             text = "Password"
         )
         TextField(
-            modifier = Modifier.padding(horizontal = 32.dp)
+            modifier = Modifier
+                .padding(horizontal = 32.dp)
                 .fillMaxWidth()
                 .wrapContentHeight(),
             value = password,
@@ -213,8 +207,10 @@ fun Register(context: Context, modifier: Modifier = Modifier) {
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d("TAG", "createUserWithEmail:success")
+                            Log.d("MYTAG", "createUserWithEmail:success")
                             val user = auth.currentUser
+                            Log.d("MYTAG", "auth: $auth")
+                            Log.d("MYTAG", "user: $user")
                             Toast.makeText(
                                 context,
                                 "Authentication Successful.",
