@@ -203,31 +203,36 @@ fun Register(context: Context, modifier: Modifier = Modifier) {
                 .padding(horizontal = 32.dp, vertical = 16.dp)
                 .fillMaxWidth(),
             onClick = {
-                auth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("MYTAG", "createUserWithEmail:success")
-                            val user = auth.currentUser
-                            Log.d("MYTAG", "auth: $auth")
-                            Log.d("MYTAG", "user: $user")
-                            Toast.makeText(
-                                context,
-                                "Authentication Successful.",
-                                Toast.LENGTH_SHORT,
-                            ).show()
-                            //updateUI(user)
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w("TAG", "createUserWithEmail:failure", task.exception)
-                            Toast.makeText(
-                                context,
-                                "Authentication failed.",
-                                Toast.LENGTH_SHORT,
-                            ).show()
-                            //updateUI(null)
+                if (email.trim() == "" || password.trim() == ""){
+                    Toast.makeText(context, "Email or password can not be empty.", Toast.LENGTH_SHORT).show()
+                }else{
+                    auth.createUserWithEmailAndPassword(email, password)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                // Sign in success, update UI with the signed-in user's information
+                                Log.d("MYTAG", "createUserWithEmail:success")
+                                val user = auth.currentUser
+                                Log.d("MYTAG", "auth: $auth")
+                                Log.d("MYTAG", "user: $user")
+                                Toast.makeText(
+                                    context,
+                                    "Authentication Successful.",
+                                    Toast.LENGTH_SHORT,
+                                ).show()
+                                //updateUI(user)
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                Log.w("TAG", "createUserWithEmail:failure", task.exception)
+                                Toast.makeText(
+                                    context,
+                                    "Authentication failed.",
+                                    Toast.LENGTH_SHORT,
+                                ).show()
+                                //updateUI(null)
+                            }
                         }
-                    }
+                }
+
             }
         ){
             Text(
