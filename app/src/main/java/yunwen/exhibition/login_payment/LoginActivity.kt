@@ -3,6 +3,7 @@ package yunwen.exhibition.login_payment
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -71,7 +72,7 @@ fun Navigation(context: Context, modifier: Modifier = Modifier) {
             LoginPage(context = context, modifier = modifier, navController = navController)
         }
         composable("register") {
-            Onboarding(modifier = modifier)
+            Register(context = context, modifier = modifier)
         }
     }
 }
@@ -134,14 +135,16 @@ fun LoginPage(
 }
 
 @Composable
-fun Onboarding(modifier: Modifier = Modifier) {
+fun Register(context: Context, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.fillMaxWidth().verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.Start
     ) {
-        var firstName by remember { mutableStateOf("") }
-        var lastName by remember { mutableStateOf("") }
+        //var firstName by remember { mutableStateOf("") }
+        var password by remember { mutableStateOf("") }
         var email by remember { mutableStateOf("") }
+        val auth = FirebaseAuth.getInstance()
+
 //        Image(
 //            painter = painterResource(id = R.drawable.logo),
 //            contentDescription = "Title",
@@ -176,33 +179,6 @@ fun Onboarding(modifier: Modifier = Modifier) {
         )
         Text(
             modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
-            text = "First name"
-        )
-        TextField(
-            modifier = Modifier
-                .padding(horizontal = 32.dp)
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            value = firstName,
-            onValueChange = {
-                firstName = it
-            }
-        )
-        Text(
-            modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
-            text = "Last name"
-        )
-        TextField(
-            modifier = Modifier.padding(horizontal = 32.dp)
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            value = lastName,
-            onValueChange = {
-                lastName = it
-            }
-        )
-        Text(
-            modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
             text = "Email"
         )
         TextField(
@@ -214,12 +190,48 @@ fun Onboarding(modifier: Modifier = Modifier) {
                 email = it
             }
         )
+        Text(
+            modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
+            text = "Password"
+        )
+        TextField(
+            modifier = Modifier.padding(horizontal = 32.dp)
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            value = password,
+            onValueChange = {
+                password = it
+            }
+        )
+
         Button(
             modifier = Modifier
                 .padding(horizontal = 32.dp, vertical = 16.dp)
                 .fillMaxWidth(),
             onClick = {
-                //onClick(firstName, lastName, email, navController)
+                auth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("TAG", "createUserWithEmail:success")
+                            val user = auth.currentUser
+                            Toast.makeText(
+                                context,
+                                "Authentication Successful.",
+                                Toast.LENGTH_SHORT,
+                            ).show()
+                            //updateUI(user)
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w("TAG", "createUserWithEmail:failure", task.exception)
+                            Toast.makeText(
+                                context,
+                                "Authentication failed.",
+                                Toast.LENGTH_SHORT,
+                            ).show()
+                            //updateUI(null)
+                        }
+                    }
             }
         ){
             Text(
