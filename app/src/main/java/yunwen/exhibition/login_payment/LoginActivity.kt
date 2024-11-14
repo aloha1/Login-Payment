@@ -72,7 +72,7 @@ fun Navigation(context: Context, modifier: Modifier = Modifier) {
             LoginPage(context = context, modifier = modifier, navController = navController)
         }
         composable(Register.route) {
-            Register(context = context, modifier = modifier)
+            Register(context = context, modifier = modifier, navController = navController)
         }
     }
 }
@@ -127,7 +127,7 @@ fun LoginPage(
             Text("Login")
         }
         Button(
-            onClick = { navController.navigate("register") }
+            onClick = { navController.navigate(Register.route) }
         ) {
             Text("Register")
         }
@@ -135,7 +135,7 @@ fun LoginPage(
 }
 
 @Composable
-fun Register(context: Context, modifier: Modifier = Modifier) {
+fun Register(context: Context, modifier: Modifier = Modifier, navController: NavController) {
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -212,14 +212,14 @@ fun Register(context: Context, modifier: Modifier = Modifier) {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d("MYTAG", "createUserWithEmail:success")
                                 val user = auth.currentUser
-                                Log.d("MYTAG", "auth: $auth")
-                                Log.d("MYTAG", "user: $user")
                                 Toast.makeText(
                                     context,
                                     "Authentication Successful.",
                                     Toast.LENGTH_SHORT,
                                 ).show()
                                 //updateUI(user)
+                                //redirect to login page
+                                navController.navigate(Login.route)
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w("TAG", "createUserWithEmail:failure", task.exception)
