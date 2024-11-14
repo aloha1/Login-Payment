@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -30,12 +28,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
 import yunwen.exhibition.login_payment.ui.theme.LoginPaymentTheme
 
@@ -48,45 +49,39 @@ class LoginActivity: AppCompatActivity() {
         setContent {
             LoginPaymentTheme{
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    LoginPage(
+                    Navigation(
                         context = this@LoginActivity,
-                        modifier = Modifier.padding(innerPadding))
-                    //Onboarding(modifier = Modifier.padding(innerPadding))
+                        modifier = Modifier.padding(innerPadding)
+                    )
                 }
             }
         }
         initViews()
-        // ... (initialize UI elements)
-        val auth = FirebaseAuth.getInstance()
-
-//        signInButton.setOnClickListener {
-//            val email = emailEditText.text.toString()
-//            val password = passwordEditText.text.toString()
-//
-//            auth.signInWithEmailAndPassword(email, password)
-//            .addOnCompleteListener(this) { task ->
-//            if (task.isSuccessful) {
-//                // Sign-in successful, navigate to the next screen
-//                val intent = Intent(this, MainActivity::class.java)
-//                startActivity(intent)
-//                finish()
-//            } else {
-//                // Handle sign-in failure
-//                Toast.makeText(this, "Sign-in failed.", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-
     }
 
 
-    private fun initViews() {
+    private fun initViews() {}
+}
 
+@Composable
+fun Navigation(context: Context, modifier: Modifier = Modifier) {
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = "login"){
+        composable("login") {
+            LoginPage(context = context, modifier = modifier, navController = navController)
+        }
+        composable("register") {
+            Onboarding(modifier = modifier)
+        }
     }
 }
 
 @Composable
-fun LoginPage(context: Context,
-              modifier: Modifier = Modifier) {
+fun LoginPage(
+    context: Context,
+    modifier: Modifier = Modifier,
+    navController: NavController
+) {
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
     val auth = FirebaseAuth.getInstance()
@@ -100,9 +95,8 @@ fun LoginPage(context: Context,
     ) {
         TextField(
             value = email.value,
-            onValueChange
-        = { email.value = it },
-        label = { Text("Email") }
+            onValueChange = { email.value = it },
+            label = { Text("Email") }
         )
         TextField(
             value = password.value,
@@ -112,22 +106,29 @@ fun LoginPage(context: Context,
 
         )
         Button(onClick = {
-//            val emailAddress = email.value.trim()
-//            val password = password.value.trim()
-
-            auth.signInWithEmailAndPassword(email.value.trim(), password.value.trim())
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        // Login successful, navigate to the next screen
-                        val intent = Intent(context, MainActivity::class.java)
-                        context.startActivity(intent)
-                    } else {
-                        // Handle login failure
-                        Toast.makeText(context, "Login failed.", Toast.LENGTH_SHORT).show()
+            if (email.value.trim() == "" || password.value.trim() == ""){
+                Toast.makeText(context, "Email or password can not be empty.", Toast.LENGTH_SHORT).show()
+            }else{
+                auth.signInWithEmailAndPassword(email.value.trim(), password.value.trim())
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            // Login successful, navigate to the next screen
+                            val intent = Intent(context, MainActivity::class.java)
+                            context.startActivity(intent)
+                        } else {
+                            // Handle login failure
+                            Toast.makeText(context, "Please check username or password.", Toast.LENGTH_SHORT).show()
+                        }
                     }
-                }
+            }
+
         }) {
             Text("Login")
+        }
+        Button(
+            onClick = { navController.navigate("register") }
+        ) {
+            Text("Register")
         }
     }
 }
@@ -135,7 +136,7 @@ fun LoginPage(context: Context,
 @Composable
 fun Onboarding(modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState()),
+        modifier = modifier.fillMaxWidth().verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.Start
     ) {
         var firstName by remember { mutableStateOf("") }
