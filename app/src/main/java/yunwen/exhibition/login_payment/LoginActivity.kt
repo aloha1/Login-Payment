@@ -1,7 +1,13 @@
 package yunwen.exhibition.login_payment
 
+import android.app.AlarmManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -61,7 +67,27 @@ class LoginActivity: AppCompatActivity() {
     }
 
 
-    private fun initViews() {}
+    private fun initViews() {
+        val receiver = AlarmReceiver()
+        val filter = IntentFilter()
+        filter.addAction("android.intent.action.BATTERY_CHANGED")
+        this.registerReceiver(receiver, filter)
+        createNotificationChannel(this)
+    }
+
+    private fun createNotificationChannel(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                CHANNEL_ID,
+                "Battery Channel",
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            val notificationManager = context.getSystemService(NotificationManager::class.java)
+            notificationManager?.createNotificationChannel(channel)
+
+        }
+    }
+
 }
 
 @Composable
