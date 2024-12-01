@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Login-Payment</string>
+    <!--    Google service-->
+    <string name="default_web_client_id" translatable="false">241316263954-vlja3di1tbnkv93jhhq5cfdsv3tr28sq.apps.googleusercontent.com</string>
+
+    <!-- Facebook application ID and custom URL scheme (app ID prefixed by 'fb'). -->
+    <string name="facebook_application_id" translatable="false">1084618019874654</string>
+    <string name="facebook_login_protocol_scheme" translatable="false">fb1084618019874654</string>
 </resources>

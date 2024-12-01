@@ -1,5 +1,6 @@
 package yunwen.exhibition.login_payment
 
+
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -11,6 +12,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -42,12 +44,23 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.google.firebase.auth.FirebaseAuth
 import yunwen.exhibition.login_payment.ui.theme.LoginPaymentTheme
 
 class LoginActivity: AppCompatActivity() {
+    companion object {
+        const val TAG = "MyTag"
+    }
 
     //private lateinit var auth: FirebaseAuth
+    private val signInLauncher = registerForActivityResult(
+        FirebaseAuthUIActivityResultContract()
+    ) { res ->
+        // Handle the sign-in result here
+        Log.d(TAG, "UI Auth res is: $res")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +75,21 @@ class LoginActivity: AppCompatActivity() {
             }
         }
         initViews()
+
+        val providers = arrayListOf(
+            AuthUI.IdpConfig.EmailBuilder().build(),
+            AuthUI.IdpConfig.PhoneBuilder().build(),
+            AuthUI.IdpConfig.GoogleBuilder().build(),
+            AuthUI.IdpConfig.FacebookBuilder().build(),
+            AuthUI.IdpConfig.TwitterBuilder().build(),
+        )
+
+// Create and launch sign-in intent
+        val signInIntent = AuthUI.getInstance()
+            .createSignInIntentBuilder()
+            .setAvailableProviders(providers)
+            .build()
+        signInLauncher.launch(signInIntent)
     }
 
 
@@ -71,6 +99,8 @@ class LoginActivity: AppCompatActivity() {
         filter.addAction("android.intent.action.BATTERY_CHANGED")
         this.registerReceiver(receiver, filter)
         createNotificationChannel(this)
+
+
     }
 
     private fun createNotificationChannel(context: Context) {
