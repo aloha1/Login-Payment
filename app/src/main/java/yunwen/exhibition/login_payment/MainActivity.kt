@@ -1,5 +1,6 @@
 package yunwen.exhibition.login_payment
 
+import android.app.NotificationManager
 import android.content.Intent
 import android.os.Bundle
 import android.util.Base64
@@ -15,8 +16,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -215,7 +218,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier, onClick: ()->Unit) {
         startDestination = HomeScreen.route,
     ){
         composable(HomeScreen.route) {
-
+            YourScreen()
         }
         composable(PayPal.route) {
 
@@ -236,6 +239,20 @@ fun Greeting(name: String, modifier: Modifier = Modifier, onClick: ()->Unit) {
         }
     }
 
+}
+
+@Composable
+fun YourScreen() {
+    val context = LocalContext.current
+    val notificationManager = LocalContext.current.getSystemService(NotificationManager::class.java) as NotificationManager
+
+    // ... other Compose UI elements ...
+
+    LaunchedEffect(key1 = true) {
+        // Observe for notifications (you might need to implement this based on your needs)
+        // For example, you could listen for incoming intents
+        // and update UI accordingly.
+    }
 }
 
 @Preview(showBackground = true)

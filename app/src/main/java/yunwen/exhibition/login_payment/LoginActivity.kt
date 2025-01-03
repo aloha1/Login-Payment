@@ -1,6 +1,5 @@
 package yunwen.exhibition.login_payment
 
-
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -41,9 +40,9 @@ import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.launch
 import yunwen.exhibition.login_payment.ui.theme.LoginPaymentTheme
-
 
 class LoginActivity : AppCompatActivity() {
     companion object {
@@ -64,6 +63,17 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val firebaseMessaging = FirebaseMessaging.getInstance()
+
+        firebaseMessaging.token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val token = task.result
+                Log.d(TAG, "Token: $token")
+                // Send token to server
+            } else {
+                Log.w(TAG, "Failed to get token")
+            }
+        }
         setContent {
             LoginPaymentTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -146,7 +156,9 @@ fun ChatApp() {
                         Message(
                             message = it.getString("message") ?: "",
                             senderId = it.getString("senderId") ?: "",
-                            timestamp = it.getTimestamp("timestamp")?.toDate().toString()
+                            timestamp = it.getTimestamp("timestamp")?.toDate().toString(),
+                            tenantId = it.getString("tenantId") ?: "",
+                            isAnonymous = it.getBoolean("isAnonymous") ?: false
                         )
                     }
                     messages = fetchedMessages
@@ -195,7 +207,9 @@ fun ChatApp() {
                             val messageData = mapOf(
                                 "message" to messageText.text,
                                 "senderId" to currentUser?.uid,
-                                "timestamp" to com.google.firebase.Timestamp.now()
+                                "timestamp" to com.google.firebase.Timestamp.now(),
+                                "tenantId" to currentUser?.tenantId,
+                                "isAnonymous" to currentUser?.isAnonymous
                             )
                             db.collection("messages").add(messageData)
                             messageText = TextFieldValue("")
